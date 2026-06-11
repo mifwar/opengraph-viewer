@@ -199,4 +199,4 @@ small.
 
 ---
 
-Made by **[mifwar](https://mifwar.com)**.
+Made by **[mifwar](https://mifwar.com/?utm_source=github&utm_medium=oss&utm_campaign=opengraph-viewer)**.
