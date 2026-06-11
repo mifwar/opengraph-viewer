@@ -196,3 +196,7 @@ small.
 ## License
 
 [MIT](LICENSE)
+
+---
+
+Made by **[mifwar](https://mifwar.com)**.

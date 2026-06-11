@@ -11,7 +11,12 @@ export default function Page() {
       </header>
       <OgViewer />
       <footer className="foot">
-        Server-side fetch with social-crawler UA &middot; bypasses browser CORS &middot; works against localhost
+        <div>
+          Server-side fetch with social-crawler UA &middot; bypasses browser CORS &middot; works against localhost
+        </div>
+        <div style={{ marginTop: 6 }}>
+          Made by <a href="https://mifwar.com" target="_blank" rel="noopener noreferrer">mifwar</a>
+        </div>
       </footer>
     </div>
   );
