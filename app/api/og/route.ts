@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { parseOg, type ParsedOg } from "@/lib/og";
+import type { ParsedOg } from "@/lib/og";
+import {
+  inspectHtml,
+  type Overview,
+} from "@/lib/inspect";
+import type { JsonLdBlock } from "@/lib/jsonld";
+import type { ValidationResult } from "@/lib/richResults";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -26,6 +32,10 @@ type OgResponse =
       redirected: boolean;
       userAgent: string;
       parsed: ParsedOg;
+      jsonld: JsonLdBlock[];
+      validations: ValidationResult[];
+      overview: Overview;
+      html: string;
     }
   | { ok: false; error: string; details?: string };
 
@@ -128,7 +138,7 @@ async function handle(req: NextRequest): Promise<NextResponse<OgResponse>> {
     );
   }
 
-  const parsed = parseOg(html, finalUrl);
+  const inspection = inspectHtml(html, finalUrl);
 
   return NextResponse.json(
     {
@@ -141,7 +151,11 @@ async function handle(req: NextRequest): Promise<NextResponse<OgResponse>> {
       fetchDurationMs: elapsed,
       redirected: finalUrl !== v.url.toString(),
       userAgent: CRAWLER_UA,
-      parsed,
+      parsed: inspection.og,
+      jsonld: inspection.jsonld,
+      validations: inspection.validations,
+      overview: inspection.overview,
+      html,
     },
     { headers: CORS_HEADERS },
   );
