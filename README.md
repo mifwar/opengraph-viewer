@@ -1,8 +1,9 @@
-# OpenGraph Viewer
+# Metadata Inspector
 
-> Inspect the **Open Graph** and **Twitter Card** metadata any URL exposes.
+> Inspect **Open Graph**, **Twitter Card**, **JSON-LD** and **Rich Results**
+> for any URL — including `localhost`.
 > Built for the day-to-day: "did my Next.js `opengraph-image.tsx` actually
-> render the right thing?"
+> render the right thing?" and "is my structured data valid for Google?"
 
 ![OpenGraph Viewer screenshot](docs/screenshot.png)
 
@@ -38,6 +39,16 @@ a crawler would see.
 - **Image proxy** — images stream through `/api/og/image` so HTTPS→HTTP
   mixed-content issues can't bite you.
 - **Per-image actions** — open in new tab, copy URL.
+- **JSON-LD discovery** — finds every `<script type="application/ld+json">`
+  block, parses it, surfaces invalid-JSON errors, and shows both raw source
+  and parsed structure. Handles arrays, `@graph`, and nested schemas.
+- **Schema detection** — identifies schema.org types (Article, FAQPage,
+  BreadcrumbList, Product, Event, VideoObject, Organization, WebSite, Person,
+  Course, …) with counts, top-level props, and nested types.
+- **Rich Results validation** — lightweight, extensible per-type rules report
+  **Errors** (required missing), **Warnings** (recommended missing) and
+  **Passed** checks. Add a type = add one entry in `lib/richResults.ts`.
+- **Tabbed UI** — Overview · Open Graph · Rich Results · JSON-LD · Raw HTML.
 - **Refresh** to re-fetch the same URL.
 - **Dark mode** toggle, respects `prefers-color-scheme`.
 
@@ -105,13 +116,42 @@ Body: `{ "url": "https://…" }` (also accepts `GET /api/og?url=…`)
     "images": [ /* all discovered, in document order */ ],
     "raw": { "og:title": ["…"], "twitter:title": ["…"] /* … */ },
     "warnings": []
-  }
+  },
+  "jsonld": [
+    {
+      "index": 0,
+      "raw": "{ \"@type\": \"Article\", … }",
+      "parsed": { /* parsed JSON, or null on error */ },
+      "error": null,                 // parse error message, or null
+      "schemas": [
+        { "types": ["Article"], "topLevelProps": ["headline", …],
+          "nestedTypes": ["Person"], "node": { /* … */ } }
+      ]
+    }
+  ],
+  "validations": [
+    { "schemaType": "Article", "schemaTypes": ["Article"], "unknown": false,
+      "errors": [], "warnings": [{ "property": "image", "message": "image is recommended" }],
+      "passed": [{ "property": "headline", "message": "headline present" }] }
+  ],
+  "overview": {
+    "url": "…", "title": "…", "description": "…",
+    "ogTagCount": 4, "jsonLdBlockCount": 1,
+    "schemaTypes": ["Article", "Person"], "errorCount": 0, "warningCount": 1
+  },
+  "html": "<!DOCTYPE html>…"          // initial HTML response (Raw HTML tab)
 }
 ```
 
 `raw` is `Record<string, string[]>` so duplicate keys (e.g. multiple
 `og:image`s) survive. `images` mirrors the OG grouping order so the first
-element is always the primary.
+element is always the primary. `jsonld` / `validations` / `overview` / `html`
+are additive — existing `parsed` consumers are unaffected.
+
+> **Note:** structured data is read from the **initial HTML response only**.
+> JSON-LD injected later by client-side JavaScript is not executed and won't
+> appear. Most SSR frameworks (Next.js, Astro, Nuxt, SvelteKit) render it into
+> the initial HTML, so localhost dev servers work.
 
 ### `GET /api/og/image?url=<encoded>`
 
@@ -179,19 +219,23 @@ app/
 │       └── image/
 │           └── route.ts    # image proxy
 ├── components/
-│   └── OgViewer.tsx        # client UI
+│   └── OgViewer.tsx        # client UI (tabbed)
 ├── globals.css             # light/dark + dev-tool aesthetic
 ├── layout.tsx              # pre-paint theme bootstrap
 └── page.tsx
 lib/
-└── og.ts                   # OG/Twitter meta parser
+├── og.ts                   # OG/Twitter meta parser
+├── jsonld.ts               # JSON-LD extraction + schema detection
+├── richResults.ts          # extensible Rich Results validation rules
+└── inspect.ts              # orchestrates og + jsonld + validation
 ```
 
 ## Dependencies
 
 Two: [`next`](https://nextjs.org) and [`react`](https://react.dev). The HTML
-meta parser in `lib/og.ts` is hand-rolled to keep the install footprint
-small.
+meta parser, JSON-LD extractor, and validator are all hand-rolled (regex +
+native `JSON.parse`) to keep the install footprint small — no extra deps for
+the new structured-data features.
 
 ## License
 

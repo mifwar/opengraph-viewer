@@ -5,8 +5,8 @@ export default function Page() {
     <div className="app">
       <header className="header">
         <div>
-          <h1>OpenGraph Viewer</h1>
-          <div className="subtitle">Paste any URL — local or public — to inspect its OG/Twitter metadata.</div>
+          <h1>Metadata Inspector</h1>
+          <div className="subtitle">Paste any URL — local or public — to inspect Open Graph, JSON-LD &amp; Rich Results.</div>
         </div>
       </header>
       <OgViewer />

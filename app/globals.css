@@ -154,6 +154,43 @@ input[type="text"]:focus, input[type="url"]:focus {
   color: var(--fg-faint);
 }
 
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.tabs .tab {
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--fg-dim);
+  padding: 8px 12px;
+  border-radius: 0;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.tabs .tab:hover { background: var(--bg-elev); color: var(--fg); }
+.tabs .tab.active {
+  color: var(--fg);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+.tabs .tab-badge {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  background: var(--bg-elev-2);
+  color: var(--fg-dim);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0 6px;
+  line-height: 16px;
+}
+.tabs .tab.active .tab-badge { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+
 .preview-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -295,6 +332,124 @@ input[type="text"]:focus, input[type="url"]:focus {
 }
 .raw .k { color: #7dd3fc; }
 .raw .v { color: #fde68a; }
+pre.raw { margin: 0; }
+
+/* Overview metrics */
+.metric-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
+  margin-top: 6px;
+}
+.metric {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  padding: 12px;
+  text-align: center;
+}
+.metric-value { font-size: 24px; font-weight: 600; font-family: var(--font-mono); line-height: 1.1; }
+.metric-value.ok { color: var(--ok); }
+.metric-value.warn { color: var(--warn); }
+.metric-value.err { color: var(--danger); }
+.metric-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-faint);
+  margin-top: 4px;
+}
+
+/* Schema type chips */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--bg-elev));
+  color: var(--accent);
+}
+
+.note {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--fg-dim);
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+}
+
+/* Breadcrumb trail */
+.breadcrumb-trail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 2px;
+  font-size: 13px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+.breadcrumb-trail .crumb { display: inline-flex; align-items: center; gap: 2px; }
+.breadcrumb-trail .crumb:last-child > a,
+.breadcrumb-trail .crumb:last-child > span:first-child { font-weight: 600; color: var(--fg); }
+.breadcrumb-trail .crumb-sep { color: var(--fg-faint); margin: 0 6px; }
+
+/* Rich Results checks */
+.checks { display: flex; flex-direction: column; gap: 6px; }
+.check {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.check .check-icon {
+  display: inline-flex;
+  width: 16px;
+  justify-content: center;
+  font-weight: 700;
+}
+.check.err { color: var(--danger); }
+.check.warn { color: var(--warn); }
+.check.ok { color: var(--ok); }
+
+/* JSON-LD schema summary */
+.schema-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.schema-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  padding: 10px;
+}
+.schema-props {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--fg-dim);
+  margin-top: 6px;
+  word-break: break-word;
+}
+.schema-props .label {
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--fg-faint);
+  margin-right: 4px;
+}
+
+.json-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+@media (min-width: 900px) {
+  .json-grid { grid-template-columns: 1fr 1fr; }
+}
 
 .error {
   border: 1px solid color-mix(in srgb, var(--danger) 40%, var(--border));
